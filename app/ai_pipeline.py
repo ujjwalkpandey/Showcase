@@ -129,3 +129,4 @@ def process_resume_pipeline(job_id: int, db: Session) -> Dict[str, Any]:
     except Exception as e:
         return {"success": False, "error": str(e)}
 
+

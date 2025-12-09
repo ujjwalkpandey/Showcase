@@ -1,8 +1,9 @@
-.PHONY: help install install-frontend dev-up dev-down migrate upgrade downgrade run-backend run-celery run-frontend run-agent test clean
+.PHONY: help install install-pip install-frontend dev-up dev-down migrate upgrade downgrade run-backend run-celery run-frontend run-agent test clean
 
 help:
 	@echo "Available commands:"
-	@echo "  make install         - Install Python dependencies"
+	@echo "  make install         - Install Python dependencies using uv (installs uv if needed)"
+	@echo "  make install-pip     - Install Python dependencies using pip (fallback)"
 	@echo "  make install-frontend - Install frontend dependencies"
 	@echo "  make dev-up          - Start PostgreSQL and Redis containers"
 	@echo "  make dev-down        - Stop containers"
@@ -17,6 +18,19 @@ help:
 	@echo "  make clean           - Clean generated files"
 
 install:
+	@if ! command -v uv > /dev/null 2>&1; then \
+		echo "📦 Installing uv..."; \
+		if [ "$$(uname -s)" = "Linux" ] || [ "$$(uname -s)" = "Darwin" ]; then \
+			curl -LsSf https://astral.sh/uv/install.sh | sh; \
+			export PATH="$$HOME/.cargo/bin:$$PATH"; \
+		else \
+			echo "Please install uv manually: https://github.com/astral-sh/uv#installation"; \
+			exit 1; \
+		fi; \
+	fi
+	@uv pip install -e .
+
+install-pip:
 	pip install -e .
 
 install-frontend:

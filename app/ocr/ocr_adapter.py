@@ -147,3 +147,4 @@ class OCRAdapter:
         provider = self._get_provider()
         return provider.extract_text(file_path)
 
+

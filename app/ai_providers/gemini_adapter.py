@@ -227,3 +227,4 @@ class GeminiAdapter:
         except json.JSONDecodeError:
             return ui_json
 
+

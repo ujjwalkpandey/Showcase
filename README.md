@@ -21,7 +21,7 @@
 
 ### ✨ Key Features
 
-- 📄 **Smart Resume Processing** - Upload PDFs, images, or DOCX files with automatic OCR extraction
+- 📄 **Smart Resume Processing** - Upload PDFs, images, or DOCX files with advanced OCR extraction using Hugging Face models
 - 🤖 **AI-Powered Enhancement** - LLM-driven content curation and optimization
 - 🎨 **Auto-Generated Layouts** - Beautiful, responsive portfolio designs tailored to your industry
 - ⚡ **Real-Time Processing** - Track your portfolio generation progress in real-time
@@ -33,8 +33,8 @@
 ## 🏗️ Architecture
 
 ```
-[User Uploads Resume] → OCR Service → Structured JSON → 
-Gemini Content Pass → Gemini Frontend Pass → 
+[User Uploads Resume] → OCR Service (Hugging Face/Tesseract) → 
+Structured JSON → Gemini Content Pass → Gemini Frontend Pass → 
 Validation & Auto-fix → Preview / Download / Vercel Deploy
 ```
 
@@ -55,7 +55,8 @@ Validation & Auto-fix → Preview / Download / Vercel Deploy
 
 ### AI & Processing
 - **Google Gemini** - State-of-the-art LLM for content generation
-- **Pytesseract** - OCR engine with cloud provider fallbacks
+- **Hugging Face OCR Models** - Advanced OCR models for text extraction (primary)
+- **Pytesseract** - OCR engine fallback for local processing
 - **Agno Agents** - Intelligent orchestration framework
 
 ### Infrastructure
@@ -69,12 +70,20 @@ Validation & Auto-fix → Preview / Download / Vercel Deploy
 Before you begin, ensure you have the following installed:
 
 - **Python 3.11+** - [Download Python](https://www.python.org/downloads/)
+- **uv** (Recommended) - Fast Python package installer - [Install uv](https://github.com/astral-sh/uv#installation)
+  - **Windows**: `powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"`
+  - **macOS/Linux**: `curl -LsSf https://astral.sh/uv/install.sh | sh`
+  - Or use pip: `pip install uv`
 - **Node.js 18+** - [Download Node.js](https://nodejs.org/)
 - **Docker & Docker Compose** - [Install Docker](https://www.docker.com/get-started)
-- **Tesseract OCR** - Required for local OCR processing
+- **Tesseract OCR** - Optional fallback for local OCR processing (recommended)
   - **Windows**: `choco install tesseract` or [Download](https://github.com/UB-Mannheim/tesseract/wiki)
   - **macOS**: `brew install tesseract`
   - **Linux**: `sudo apt-get install tesseract-ocr`
+  
+> **Note**: Showcase primarily uses Hugging Face OCR models for text extraction. Tesseract is used as a fallback when Hugging Face models are unavailable or for offline processing.
+
+> **Note**: `uv` is required for dependency installation. The setup scripts will automatically install `uv` if it's not found.
 
 ---
 
@@ -89,10 +98,23 @@ cd showcase
 
 ### 2️⃣ Install Dependencies
 
+**Using uv (Automatic Installation):**
 ```bash
-# Install Python dependencies
-pip install -e .
+# Install Python dependencies with uv (uv will be installed automatically if needed)
+make install
+# Or manually:
+uv pip install -e .
+```
 
+**Using pip (Fallback - Not Recommended):**
+```bash
+# Install Python dependencies with pip
+pip install -e .
+# Or: make install-pip
+```
+
+**Install Frontend Dependencies:**
+```bash
 # Install frontend generator dependencies
 cd frontend_generator && npm install && cd ..
 
@@ -271,6 +293,10 @@ REDIS_URL=redis://localhost:6379/0
 # AI Provider (Required for AI features)
 GEMINI_API_KEY=your_gemini_api_key_here
 
+# Hugging Face (Optional - for OCR models)
+# Models are downloaded automatically, but you can set a token for private models
+HUGGINGFACE_API_TOKEN=your_huggingface_token_here
+
 # Vercel Deployment (Required for deployment)
 VERCEL_TOKEN=your_vercel_token_here
 VERCEL_ORG_ID=your_vercel_org_id_here
@@ -284,6 +310,7 @@ DEBUG=True
 ### Getting API Keys
 
 - **Gemini API Key**: [Get from Google AI Studio](https://makersuite.google.com/app/apikey)
+- **Hugging Face Token** (Optional): [Get from Hugging Face](https://huggingface.co/settings/tokens) - Only needed for private models
 - **Vercel Token**: [Get from Vercel Dashboard](https://vercel.com/account/tokens)
 
 ---
@@ -314,7 +341,8 @@ make downgrade
 
 ```bash
 make help              # Show all available commands
-make install          # Install Python dependencies
+make install          # Install Python dependencies using uv (installs uv if needed)
+make install-pip       # Install Python dependencies using pip explicitly
 make install-frontend # Install frontend dependencies
 make dev-up           # Start Docker services
 make dev-down         # Stop Docker services
@@ -339,11 +367,21 @@ server: {
 }
 ```
 
-### Tesseract Not Found
+### OCR Processing Issues
 
-- Ensure Tesseract is installed and in your PATH
-- Verify installation: `tesseract --version`
-- Windows: Add Tesseract installation directory to PATH
+**Hugging Face Models:**
+- Hugging Face OCR models are downloaded automatically on first use
+- Ensure you have internet connection for initial model download
+- Models are cached locally after first download
+- If models fail to load, the system will automatically fallback to Tesseract
+
+**Tesseract Fallback:**
+- Tesseract is optional but recommended as a fallback
+- If Tesseract is not installed, OCR will rely solely on Hugging Face models
+- To install Tesseract (optional):
+  - Ensure Tesseract is installed and in your PATH
+  - Verify installation: `tesseract --version`
+  - Windows: Add Tesseract installation directory to PATH
 
 ### Database Connection Errors
 
@@ -362,10 +400,34 @@ server: {
 - The pipeline will use mock responses for testing
 - For real AI features, add your Gemini API key to `.env`
 
+### uv Installation Issues
+
+**Automatic Installation:**
+- Setup scripts automatically install `uv` if not found
+- If automatic installation fails, install manually:
+
+**Windows:**
+- If PowerShell execution policy blocks installation, run:
+  ```powershell
+  Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+  ```
+- Then install: `powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"`
+- Restart terminal after installation
+
+**macOS/Linux:**
+- Ensure you have curl installed: `curl --version`
+- Install: `curl -LsSf https://astral.sh/uv/install.sh | sh`
+- Add to PATH: `export PATH="$HOME/.cargo/bin:$PATH"` (add to `~/.bashrc` or `~/.zshrc`)
+
+**Verification:**
+- Check if uv is installed: `uv --version`
+- If issues persist, restart your terminal to refresh PATH
+
 ---
 
 ## 🚧 Roadmap
 
+- [ ] **Enhanced OCR Models** - Support for additional Hugging Face OCR models
 - [ ] **Enhanced AI Models** - Support for multiple LLM providers
 - [ ] **Custom Themes** - User-selectable portfolio themes
 - [ ] **Analytics Integration** - Track portfolio views and engagement

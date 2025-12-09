@@ -99,3 +99,4 @@ def deploy_to_vercel_task(job_id: int):
     finally:
         db.close()
 
+

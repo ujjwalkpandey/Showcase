@@ -80,3 +80,4 @@ class ChatMessage(Base):
     # Relationships
     job = relationship("Job", back_populates="chat_messages")
 
+

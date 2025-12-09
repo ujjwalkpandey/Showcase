@@ -11,3 +11,4 @@ def get_database(db: Session = Depends(get_db)) -> Session:
     """Dependency for database session."""
     return db
 
+

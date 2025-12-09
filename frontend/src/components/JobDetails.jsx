@@ -189,3 +189,4 @@ function JobDetails({ jobId, onRefresh }) {
 
 export default JobDetails
 
+

@@ -30,9 +30,7 @@ from agents.core.schema_builder import SchemaBuilder
 from agents.generation.content_generator import ContentGenerator
 from agents.validation.validator import PortfolioValidator
 
-# ---------------------------------------------------------------------
 # Logging
-# ---------------------------------------------------------------------
 
 logger = logging.getLogger("agents.orchestrator")
 logger.setLevel(logging.INFO)
@@ -45,9 +43,7 @@ if not logger.handlers:
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
-# ---------------------------------------------------------------------
 # Exceptions
-# ---------------------------------------------------------------------
 
 class OrchestratorError(Exception):
     """Base orchestrator error."""
@@ -61,9 +57,7 @@ class ValidationError(OrchestratorError):
     """Raised when validation fails."""
 
 
-# ---------------------------------------------------------------------
 # Orchestrator
-# ---------------------------------------------------------------------
 
 class PortfolioOrchestrator:
     """
@@ -266,9 +260,7 @@ class PortfolioOrchestrator:
 """
 
 
-# ---------------------------------------------------------------------
 # Singleton Access
-# ---------------------------------------------------------------------
 
 _orchestrator: Optional[PortfolioOrchestrator] = None
 _lock = asyncio.Lock()

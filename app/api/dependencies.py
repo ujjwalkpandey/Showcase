@@ -1,12 +1,13 @@
-"""
-API dependencies and utilities.
-"""
-from fastapi import Depends
+from typing import Generator
 from sqlalchemy.orm import Session
+from app.adapters.database import SessionLocal
+# from fastapi import HTTPException, status
 
-from app.database import get_db
+def get_db() -> Generator:
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
-
-def get_database(db: Session = Depends(get_db)) -> Session:
-    """Dependency for database session."""
-    return db
+# auth to be added here later

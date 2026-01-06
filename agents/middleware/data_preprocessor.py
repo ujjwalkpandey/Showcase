@@ -37,9 +37,7 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional
 from urllib.parse import urlparse
 
-# ---------------------------------------------------------------------
 # Logging
-# ---------------------------------------------------------------------
 
 logger = logging.getLogger("agents.preprocessor")
 logger.setLevel(logging.INFO)
@@ -52,9 +50,7 @@ if not logger.handlers:
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
-# ---------------------------------------------------------------------
 # Exceptions
-# ---------------------------------------------------------------------
 
 class PreprocessingError(Exception):
     """Base exception for preprocessing failures."""
@@ -64,9 +60,7 @@ class InputValidationError(PreprocessingError):
     """Raised when resume input is invalid."""
 
 
-# ---------------------------------------------------------------------
 # Preprocessor
-# ---------------------------------------------------------------------
 
 @dataclass
 class PreprocessorConfig:

@@ -1,5 +1,32 @@
-# CONTENT_GENERATOR.PY - AI Content Generation Agent (Gemini Integration)
+"""
+CONTENT_GENERATOR.PY - AI Content Generation Agent (Gemini Integration)
+========================================================================
 
+PURPOSE:
+This is the creative brain of the pipeline. It uses Google's Gemini LLM to generate
+compelling portfolio content from the structured schema.
+
+DATA FLOW IN:
+- Portfolio schema (from schema_builder)
+- User data (original preprocessed data for context)
+
+DATA FLOW OUT:
+- Complete portfolio with AI-generated content:
+  * Hero tagline
+  * Professional bio
+  * Enhanced project descriptions
+  * Section content
+
+HOW IT WORKS:
+- Uses constrained generation (not plain prompts!)
+- Sends schema + strict formatting rules to Gemini
+- Generates React components, Tailwind styles, config files
+- Maintains consistency across all generated content
+- Uses temperature control for creativity vs. accuracy balance
+
+NOTE: THIS CODE IS AI GENERATED, YOUR WORK IS TO ANALYSIS THE CODE AND CHECK THE LOGIC AND MAKE CHANGES
+     WHERE REQUIRED
+"""
 import logging
 import asyncio
 from typing import Dict, Any, List, Optional, Union
